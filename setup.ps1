@@ -63,28 +63,38 @@ foreach ($l in $labels) {
 }
 
 # 6. public project with a Status field
+# Projects (v2) need the `project` scope. When a call fails, it becomes a numbered manual step
+# below and the script goes on.
+$script:projectFailed = $false
+function Write-GhProject {
+    param([string]$Step, [string[]]$GhArgs)
+    if ($script:projectFailed) { return }
+    if (-not (Write-Gh $GhArgs)) {
+        $script:projectFailed = $true
+        $manual.Add("Project ($Step failed, probably the token lacks the project scope): run 'gh auth refresh -s project' and re-run this script, or do it by hand at https://github.com/orgs/$Org/projects : create '$ProjectTitle', make it public, link it to $full, add a text field named Release.")
+    }
+}
 $projects = Read-Gh @('project', 'list', '--owner', $Org, '--format', 'json', '--limit', '100')
 $existing = $null
 if ($projects) { $existing = ($projects | ConvertFrom-Json).projects | Where-Object { $_.title -eq $ProjectTitle } | Select-Object -First 1 }
 if ($existing) { Write-Host "ok   project '$ProjectTitle' exists (#$($existing.number))"; $num = $existing.number }
 else {
-    Write-Gh @('project', 'create', '--owner', $Org, '--title', $ProjectTitle) | Out-Null
+    Write-GhProject 'create' @('project', 'create', '--owner', $Org, '--title', $ProjectTitle)
     $num = '<number>'
-    if (-not $WhatIf) {
+    if (-not $WhatIf -and -not $script:projectFailed) {
         $num = (Read-Gh @('project', 'list', '--owner', $Org, '--format', 'json', '--limit', '100') | ConvertFrom-Json).projects |
             Where-Object { $_.title -eq $ProjectTitle } | Select-Object -First 1 -ExpandProperty number
     }
 }
-Write-Gh @('project', 'edit', "$num", '--owner', $Org, '--visibility', 'PUBLIC') | Out-Null
-Write-Gh @('project', 'link', "$num", '--owner', $Org, '--repo', $full) | Out-Null
-Write-Gh @('project', 'field-create', "$num", '--owner', $Org, '--name', 'Release', '--data-type', 'TEXT') | Out-Null
+Write-GhProject 'edit' @('project', 'edit', "$num", '--owner', $Org, '--visibility', 'PUBLIC')
+Write-GhProject 'link' @('project', 'link', "$num", '--owner', $Org, '--repo', $full)
+Write-GhProject 'field-create' @('project', 'field-create', "$num", '--owner', $Org, '--name', 'Release', '--data-type', 'TEXT')
 # A new project already has a single-select Status field (Todo / In Progress / Done). gh cannot
 # rename its options, and a second field named Status is refused.
 $manual.Add("Project Status options: open the project > Settings > Status. Set the options to Under consideration, Planned, In progress, Shipped, Not planned.")
 $manual.Add("Project views: Roadmap = Board grouped by Status, filter -status:""Not planned""; Bugs = Table, filter label:bug; Shipped = Table grouped by Release, filter status:Shipped.")
 $manual.Add("Project workflows: Settings > Workflows. Item added -> Status Under consideration; Item closed -> Status Shipped; Auto-add to project with filter repo:$full (one allowed on Free).")
 $manual.Add("Organisation: set the avatar and the repository social preview image (Settings > General) when the brand pass delivers them.")
-$manual.Add("Replace the placeholders {{SUPPORT_EMAIL}} and {{DOCS_URL}} in README.md, SECURITY.md and .github/ISSUE_TEMPLATE/config.yml once the domain exists.")
 
 # 7. read every created item back by name
 Write-Host ''
@@ -104,8 +114,9 @@ else {
     Check 'discussions enabled' ([bool]$r.hasDiscussionsEnabled)
     $have = (Read-Gh @('label', 'list', '--repo', $full, '--limit', '200', '--json', 'name') | ConvertFrom-Json).name
     foreach ($l in $labels) { Check "label $($l[0])" ($have -contains $l[0]) }
-    $p = (Read-Gh @('project', 'list', '--owner', $Org, '--format', 'json', '--limit', '100') | ConvertFrom-Json).projects | Where-Object { $_.title -eq $ProjectTitle } | Select-Object -First 1
-    Check "project '$ProjectTitle'" ($null -ne $p)
+    $p = $null
+    if (-not $script:projectFailed) { $p = (Read-Gh @('project', 'list', '--owner', $Org, '--format', 'json', '--limit', '100') | ConvertFrom-Json).projects | Where-Object { $_.title -eq $ProjectTitle } | Select-Object -First 1 }
+    if ($script:projectFailed) { Write-Host 'SKIP project checks (manual step above)' } else { Check "project '$ProjectTitle'" ($null -ne $p) }
     if ($p) {
         Check 'project is public' ([bool]$p.public)
         $fields = (Read-Gh @('project', 'field-list', "$($p.number)", '--owner', $Org, '--format', 'json') | ConvertFrom-Json).fields.name
