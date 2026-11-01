@@ -1,0 +1,7 @@
+name: probe2
+description: p
+body:
+  - type: textarea
+    id: a
+    attributes:
+      label: A
