@@ -1,4 +1,4 @@
-﻿name: Bug report
+name: Bug report
 description: Something in Glyph Gestures does not work as it should.
 labels: ["bug"]
 body:
