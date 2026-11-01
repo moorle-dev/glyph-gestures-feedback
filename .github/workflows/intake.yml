@@ -1,0 +1,52 @@
+name: Intake
+
+# Bug-form issues with a missing or non-version value get `needs-info` and one fixed comment.
+# No AI. The issue text only ever reaches the script through an environment variable.
+on:
+  issues:
+    types: [opened, edited]
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out the checker script
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          sparse-checkout: .github/scripts
+          persist-credentials: false
+      - name: Check the version fields
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          NUMBER: ${{ github.event.issue.number }}
+          ACTION: ${{ github.event.action }}
+          BODY: ${{ github.event.issue.body }}
+        run: |
+          set -u
+          labels="$(gh issue view "$NUMBER" --repo "$REPO" --json labels --jq '.labels[].name')"
+          if ! grep -qx bug <<<"$labels"; then echo "not a bug-form issue"; exit 0; fi
+          missing="$(.github/scripts/intake-check.sh)"
+          has_label=false
+          grep -qx needs-info <<<"$labels" && has_label=true
+          if [ -z "$missing" ]; then
+            if [ "$ACTION" = edited ] && $has_label; then
+              gh issue edit "$NUMBER" --repo "$REPO" --remove-label needs-info
+              echo "removed needs-info"
+            fi
+            exit 0
+          fi
+          [ "$ACTION" = opened ] || exit 0
+          what=""
+          grep -qx package <<<"$missing" && what="the Glyph Gestures version"
+          if grep -qx unity <<<"$missing"; then
+            [ -n "$what" ] && what="$what and "
+            what="${what}the Unity version"
+          fi
+          gh issue edit "$NUMBER" --repo "$REPO" --add-label needs-info
+          gh issue comment "$NUMBER" --repo "$REPO" --body "Thanks for the report. Could you edit the issue and give $what as numbers (for example 1.0.0 and 6000.0.76f1)? In Unity, open the ⋯ menu of the Glyph Gestures window and choose Copy diagnostics: it holds both. I will look at it as soon as they are there."

@@ -1,0 +1,38 @@
+name: Stale
+
+# Only issues waiting on the reporter (`needs-info`) lapse. Ideas and Discussions are untouched.
+on:
+  schedule:
+    - cron: "17 5 * * *"
+  workflow_dispatch:
+    inputs:
+      days:
+        description: Days before an issue is marked stale (the same number again closes it)
+        default: "7"
+      debug:
+        description: Log what would change and change nothing
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Mark and close issues waiting on the reporter
+        uses: actions/stale@4391f3da665fdf50b6810c1a66712fb9ba21aa93 # v11.0.0
+        with:
+          only-labels: needs-info
+          days-before-stale: ${{ inputs.days || 7 }}
+          days-before-close: ${{ inputs.days || 7 }}
+          days-before-pr-stale: -1
+          days-before-pr-close: -1
+          stale-issue-label: stale
+          close-issue-reason: not_planned
+          debug-only: ${{ inputs.debug || false }}
+          stale-issue-message: "Still waiting on the details above. Reply or edit the issue to keep it open; otherwise it closes in a week, and you can reopen it any time."
+          close-issue-message: "Closing for now since the details did not arrive. Reopen it whenever you have them."
