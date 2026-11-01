@@ -1,3 +1,5 @@
+![Glyph Gestures by Moorle](.github/banner.png)
+
 # Glyph Gestures by Moorle: feedback
 
 Public place to ask questions, suggest features and report bugs for Glyph Gestures, the Unity gesture
