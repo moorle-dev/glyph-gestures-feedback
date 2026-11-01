@@ -15,4 +15,7 @@ pkg_re='^[0-9]+\.[0-9]+\.[0-9]+([-+][0-9A-Za-z.+-]+)?$'
 unity_re='^[0-9]+\.[0-9]+\.[0-9]+[abfp][0-9]+$'
 [[ "$pkg" =~ $pkg_re ]] || echo package
 [[ "$unity" =~ $unity_re ]] || echo unity
+# an invoice number in a public issue can be copied by anyone
+printf '%s' "$BODY" | tr '
+' '  ' | grep -Eqi 'invoice[^0-9]{0,20}[0-9]{5,}' && echo invoice
 exit 0

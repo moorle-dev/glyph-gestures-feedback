@@ -22,16 +22,19 @@ text reaches a script only through an environment variable, never an expression 
 | SP-10 | Rate limits | The post workflow sends at most 20 posts per run, one after another; on a 403 or 429 it stops and reports, and never retries in a loop. | planned |
 | SP-11 | A public log leaks a secret | No secret except `GITHUB_TOKEN` reaches a public workflow; a log grep on a dry run finds no token pattern. | grep half: `tests/check-workflows.sh`; log grep: run once per workflow change |
 | SP-12 | A dead support link deprecates the listing | A weekly HEAD check of the mailto page, the bug form and the Q&A URLs; the digest shows red on failure. | planned |
+| SP-13 | An invoice number appears in a public place | Intake flags a body with a digit string after "invoice" and asks the author to edit it out; no form, template or comment asks for one (the Asset Store invoice is mailed once, never posted). Known answers in `tests/check-workflows.sh`, red first. | `tests/check-workflows.sh`; post workflow planned |
+| SP-14 | The portal's invoice endpoint changes shape | The verify script returns "could not read" on a changed reply, never "valid". | planned |
+| SP-15 | A refunded buyer keeps priority | A fixture with status `refund` removes the buyer row and the `buyer` label. | planned |
 
 ## Plumbing found while building the workflows
 
 | Id | Trap | Identity or safety test |
 |---|---|---|
-| SP-13 | Setting any `permissions:` key makes every unlisted scope `none`, so a missing key fails silently | `tests/check-workflows.sh` fails a workflow with no `permissions:` block; each proving run posts its comment or label by name |
-| SP-14 | A label added by `GITHUB_TOKEN` starts no second workflow | Nothing chains on a label event; `stale.yml` finds `needs-info` by schedule, not by trigger |
-| SP-15 | The intake check must not run on Discussions, pull requests or non-form issues | Known answer: an issue without the `bug` label gets no label and no comment |
-| SP-16 | A version field holding `latest`, `6000` or `_No response_` passes a presence check | Known answers in `tests/check-workflows.sh`: `1.0.0` and `6000.0.76f1` pass; `latest`, `6000`, `idk`, `_No response_` each fail |
-| SP-17 | The reporter fixes the fields and `needs-info` stays, so `stale.yml` later closes a complete issue | Editing the issue to valid versions removes `needs-info` (`edited` branch of `intake.yml`), proven on a test issue |
-| SP-18 | The stale schedule could close an issue that is not waiting on the reporter | `only-labels: needs-info`; a test issue without that label stays untouched in the same run |
-| SP-19 | A third-party action tag can move | Every `uses:` is a 40-character SHA, asserted by `tests/check-workflows.sh`; a tag in place of a SHA fails red |
-| SP-20 | An expression in a `run:` line pastes issue text into the shell | `tests/check-workflows.sh` fails a workflow with `${{` inside any `run:` block (seen red on a fixture) |
+| SP-20 | Setting any `permissions:` key makes every unlisted scope `none`, so a missing key fails silently | `tests/check-workflows.sh` fails a workflow with no `permissions:` block; each proving run posts its comment or label by name |
+| SP-21 | A label added by `GITHUB_TOKEN` starts no second workflow | Nothing chains on a label event; `stale.yml` finds `needs-info` by schedule, not by trigger |
+| SP-22 | The intake check must not run on Discussions, pull requests or non-form issues | Known answer: an issue without the `bug` label gets no label and no comment |
+| SP-23 | A version field holding `latest`, `6000` or `_No response_` passes a presence check | Known answers in `tests/check-workflows.sh`: `1.0.0` and `6000.0.76f1` pass; `latest`, `6000`, `idk`, `_No response_` each fail |
+| SP-24 | The reporter fixes the fields and `needs-info` stays, so `stale.yml` later closes a complete issue | Editing the issue to valid versions removes `needs-info` (`edited` branch of `intake.yml`), proven on a test issue |
+| SP-25 | The stale schedule could close an issue that is not waiting on the reporter | `only-labels: needs-info`; a test issue without that label stays untouched in the same run |
+| SP-26 | A third-party action tag can move | Every `uses:` is a 40-character SHA, asserted by `tests/check-workflows.sh`; a tag in place of a SHA fails red |
+| SP-27 | An expression in a `run:` line pastes issue text into the shell | `tests/check-workflows.sh` fails a workflow with `${{` inside any `run:` block (seen red on a fixture) |

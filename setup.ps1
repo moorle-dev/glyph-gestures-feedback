@@ -55,6 +55,7 @@ $labels = @(
     @('duplicate', 'cfd3d7', 'Already reported'),
     @('needs-info', 'fbca04', 'Waiting on details from the reporter'),
     @('question', 'd876e3', 'A question, not a bug'),
+    @('buyer', '0e8a16', 'Verified purchaser'),
     @('stale', 'ededed', 'No reply from the reporter for a while'),
     @('area:recognition', '5319e7', 'Gesture recognition'),
     @('area:studio', '5319e7', 'Studio window and editor tools'),
