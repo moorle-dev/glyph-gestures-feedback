@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Suggest a feature or vote
+    url: https://github.com/moorle-dev/glyph-gestures-feedback/discussions/categories/ideas
+    about: Ideas live in Discussions. Upvote the ones you want.
+  - name: Documentation
+    url: https://{{DOCS_URL}}
+    about: Check the docs first.
+  - name: Email support
+    url: mailto:{{SUPPORT_EMAIL}}
+    about: Invoice, licence or anything private.

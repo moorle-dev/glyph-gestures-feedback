@@ -1,0 +1,77 @@
+﻿name: Bug report
+description: Something in Glyph Gestures does not work as it should.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping. Have an idea instead of a bug? Please use [Discussions, Ideas](https://github.com/moorle-dev/glyph-gestures-feedback/discussions/categories/ideas).
+  - type: input
+    id: package-version
+    attributes:
+      label: Glyph Gestures version
+      description: Window > Package Manager > Glyph Gestures, for example 1.0.0.
+    validations:
+      required: true
+  - type: input
+    id: unity-version
+    attributes:
+      label: Unity version
+      description: Help > About Unity, for example 6000.0.76f1.
+    validations:
+      required: true
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      options:
+        - Windows
+        - macOS
+        - Linux
+        - Android
+        - iOS
+        - Other
+    validations:
+      required: true
+  - type: dropdown
+    id: input-device
+    attributes:
+      label: Input device
+      options:
+        - Mouse
+        - Touch screen
+        - Pen
+        - Controller or hand tracking
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. ...
+        2. ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: What happened instead
+      description: A screenshot or short clip helps. Drag it into this box.
+    validations:
+      required: true
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: Paste diagnostics
+      description: Paste the Console error text, or anything else you think helps. Leave empty if there is none.
+      render: shell
+    validations:
+      required: false

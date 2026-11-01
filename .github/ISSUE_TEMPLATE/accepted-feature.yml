@@ -1,0 +1,29 @@
+﻿name: Accepted feature
+description: Maintainer use. A Discussion idea that reached Planned.
+labels: ["feature"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This form is for the maintainer. To suggest a feature, please use [Discussions, Ideas](https://github.com/moorle-dev/glyph-gestures-feedback/discussions/categories/ideas).
+  - type: input
+    id: discussion
+    attributes:
+      label: Discussion link
+      description: The Ideas discussion this feature came from.
+    validations:
+      required: true
+  - type: textarea
+    id: use-case
+    attributes:
+      label: Use case
+      description: What people are building and what blocks them.
+    validations:
+      required: true
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Outcome
+      description: What will be true when this ships.
+    validations:
+      required: true
