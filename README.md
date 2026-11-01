@@ -12,7 +12,7 @@ recognition package. This repository holds no code.
 | Suggest a feature or vote on one | [Discussions, Ideas](https://github.com/moorle-dev/glyph-gestures-feedback/discussions/categories/ideas) |
 | Ask how something works | [Discussions, Q&A](https://github.com/moorle-dev/glyph-gestures-feedback/discussions/categories/q-a) |
 | Report something broken | [New bug report](https://github.com/moorle-dev/glyph-gestures-feedback/issues/new?template=bug-report.yml) |
-| See what is planned and what shipped | [Roadmap](https://github.com/orgs/moorle-dev/projects) and [Releases](https://github.com/moorle-dev/glyph-gestures-feedback/releases) |
+| See what is planned and what shipped | [Roadmap](https://github.com/orgs/moorle-dev/projects/1) and [Releases](https://github.com/moorle-dev/glyph-gestures-feedback/releases) |
 | Ask about your invoice, licence or anything private | Email moorle.dev@gmail.com |
 
 Vote on an idea by clicking its upvote. The most upvoted ideas are read first. You need a GitHub
