@@ -1,6 +1,6 @@
 name: Bug report
 description: Something in Glyph Gestures does not work as it should.
-labels: ["bug"]
+labels: ["bug", "needs-triage"]
 body:
   - type: markdown
     attributes:
@@ -20,6 +20,18 @@ body:
       description: Help > About Unity, for example 6000.0.76f1.
     validations:
       required: true
+  - type: dropdown
+    id: render-pipeline
+    attributes:
+      label: Render pipeline
+      description: The render pipeline is the part of Unity that draws your game. Pick Not sure if you do not know.
+      options:
+        - Built-in
+        - URP
+        - HDRP
+        - Not sure
+    validations:
+      required: false
   - type: dropdown
     id: platform
     attributes:
@@ -70,8 +82,8 @@ body:
   - type: textarea
     id: diagnostics
     attributes:
-      label: Paste diagnostics
-      description: Paste the Console error text, or anything else you think helps. Leave empty if there is none.
-      render: shell
+      label: If you can, paste the text from Copy diagnostics
+      description: In the Glyph Studio window, choose ⋮ > Copy diagnostics at the top right. It puts details about your project on the clipboard. They help find the cause, and they hold no names or file paths.
+      render: text
     validations:
       required: false

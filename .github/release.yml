@@ -7,9 +7,6 @@ changelog:
     - title: New
       labels:
         - feature
-    - title: Improvements
-      labels:
-        - improvement
     - title: Fixes
       labels:
         - bug

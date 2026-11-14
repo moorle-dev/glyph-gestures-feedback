@@ -35,4 +35,25 @@ t "word invoice alone is fine" "1.0.0" "6000.0.76f1" ""
 # no form, template or comment asks for an invoice number
 if grep -rniE 'invoice (number|no)|order number|purchase number' .github/ISSUE_TEMPLATE | grep -v '^$' ; then bad "templates never ask for an invoice"; else ok "templates never ask for an invoice"; fi
 if grep -nE 'gh issue comment.*(send|enter|paste|give|provide)[^"]*(invoice|purchase number)' .github/workflows/*.yml; then bad "comments never ask for an invoice"; else ok "comments never ask for an invoice"; fi
+# the plan script decides what intake changes; known answers for the swap and the actor rule
+plan="bash .github/scripts/intake-plan.sh"
+p() { got="$(ACTION="$2" LABELS="$3" MISSING="$4" LAST_ACTOR="$5" $plan 2>&1 | tr '
+' ';')"; [ "$got" = "$6" ] && ok "plan: $1" || bad "plan: $1 got '$got'"; }
+p "opened, version missing: needs-info replaces needs-triage" opened $'bug
+needs-triage' "package" "" "remove needs-triage;add needs-info;comment;"
+p "opened, versions fine: nothing changes" opened $'bug
+needs-triage' "" "" ""
+p "edited, script's needs-info, versions fixed: swaps back" edited $'bug
+needs-info' "" "github-actions[bot]" "remove needs-info;add needs-triage;"
+p "edited, hand-set needs-info, versions fixed: stays" edited $'bug
+needs-info' "" "nanoziros" ""
+p "edited, versions still bad: nothing changes" edited $'bug
+needs-info' "unity" "github-actions[bot]" ""
+p "edited, no needs-info: nothing changes" edited $'bug
+needs-triage' "" "" ""
+# the invoice warning names the one published address, and the retired one appears nowhere
+grep -q 'hello@moorle\.dev' .github/workflows/intake.yml && ok "invoice warning names hello@moorle.dev" || bad "invoice warning names hello@moorle.dev"
+grep -rq 'moorle\.dev@gmail\.com' .github/workflows .github/ISSUE_TEMPLATE && bad "no workflow or form names the Gmail address" || ok "no workflow or form names the Gmail address"
+grep -q 'as soon as they are there' .github/workflows/intake.yml && bad "needs-info comment names no time" || ok "needs-info comment names no time"
+[ -e .github/workflows/stale.yml ] && bad "no workflow closes for age" || ok "no workflow closes for age"
 [ "$fail" -eq 0 ] && echo "ALL PASS" || { echo "$fail failed"; exit 1; }
