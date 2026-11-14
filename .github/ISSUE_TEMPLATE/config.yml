@@ -1,8 +1,11 @@
 blank_issues_enabled: false
 contact_links:
+  - name: Ask a question
+    url: https://github.com/moorle-dev/glyph-gestures-feedback/discussions/categories/q-a
+    about: Ask how to use Glyph Gestures in Discussions, Q&A.
   - name: Suggest a feature or vote
     url: https://github.com/moorle-dev/glyph-gestures-feedback/discussions/categories/ideas
     about: Ideas live in Discussions. Upvote the ones you want.
-  - name: Email support
-    url: mailto:moorle.dev@gmail.com
-    about: Invoice, licence or anything private.
+  - name: Write to me privately
+    url: mailto:hello@moorle.dev
+    about: A purchase, your invoice, a licence or anything else that should not be public.
