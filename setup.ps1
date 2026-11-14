@@ -49,18 +49,19 @@ $manual.Add("Discussions categories: open https://github.com/$full/discussions >
 $labels = @(
     @('bug', 'd73a4a', 'Something is broken'),
     @('feature', '0e8a16', 'Accepted new feature'),
-    @('improvement', '1d76db', 'Makes something existing better'),
     @('docs', '0075ca', 'Documentation'),
     @('wontfix', 'ffffff', 'Not planned'),
     @('duplicate', 'cfd3d7', 'Already reported'),
     @('needs-info', 'fbca04', 'Waiting on details from the reporter'),
     @('question', 'd876e3', 'A question, not a bug'),
-    @('buyer', '0e8a16', 'Verified purchaser'),
-    @('stale', 'ededed', 'No reply from the reporter for a while'),
     @('area:recognition', '5319e7', 'Gesture recognition'),
     @('area:studio', '5319e7', 'Studio window and editor tools'),
     @('area:input', '5319e7', 'Input devices and platforms'),
-    @('area:install', '5319e7', 'Install, packages and upgrades')
+    @('area:install', '5319e7', 'Install, packages and upgrades'),
+    @('needs-triage', 'ededed', 'New, not read yet'),
+    @('confirmed', 'b60205', 'Reproduced, or two independent reports agree'),
+    @('fixed-pending-release', '0e8a16', 'Fixed for a named version that is not in the store yet'),
+    @('from-email', 'c5def5', 'Written from private reports; people to tell by mail when it closes')
 )
 foreach ($l in $labels) {
     Write-Gh @('label', 'create', $l[0], '--repo', $full, '--color', $l[1], '--description', $l[2], '--force') | Out-Null
@@ -96,8 +97,8 @@ Write-GhProject 'field-create' @('project', 'field-create', "$num", '--owner', $
 # A new project already has a single-select Status field (Todo / In Progress / Done). gh cannot
 # rename its options, and a second field named Status is refused.
 $manual.Add("Project Status options: open the project > Settings > Status. Set the options to Under consideration, Planned, In progress, Shipped, Not planned.")
-$manual.Add("Project views: Roadmap = Board grouped by Status, filter -status:""Not planned""; Bugs = Table, filter label:bug; Shipped = Table grouped by Release, filter status:Shipped.")
-$manual.Add("Project workflows: Settings > Workflows. Item added -> Status Under consideration; Item closed -> Status Shipped; Auto-add to project with filter repo:$full (one allowed on Free).")
+$manual.Add("Project views: Roadmap = Board grouped by Status, filter -status:""Not planned""; Shipped = Table grouped by Release, filter status:Shipped.")
+$manual.Add("Project workflows: Settings > Workflows. Item added -> Status Under consideration; Item closed stays off (roadmap-sync ship writes Shipped); Auto-add to project with filter is:issue label:roadmap,feature (one allowed on Free).")
 $manual.Add("Organisation: set the avatar and the repository social preview image (Settings > General) when the brand pass delivers them.")
 
 # 7. read every created item back by name
