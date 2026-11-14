@@ -1,6 +1,8 @@
 name: Intake
 
-# Bug-form issues with a missing or non-version value get `needs-info` and one fixed comment.
+# Bug-form issues with a missing or non-version value get `needs-info` in place of `needs-triage`,
+# and one fixed comment. An edit that supplies both versions swaps it back, but only when this
+# workflow set the `needs-info` itself.
 # No AI. The issue text only ever reaches the script through an environment variable.
 on:
   issues:
@@ -33,24 +35,21 @@ jobs:
           if ! grep -qx bug <<<"$labels"; then echo "not a bug-form issue"; exit 0; fi
           missing="$(bash .github/scripts/intake-check.sh)"
           if grep -qx invoice <<<"$missing" && [ "$ACTION" = opened ]; then
-            gh issue comment "$NUMBER" --repo "$REPO" --body "This issue seems to show a purchase number, and anyone can read it here. Please edit it out; if you need a purchase checked, mail it once to moorle.dev@gmail.com instead."
+            gh issue comment "$NUMBER" --repo "$REPO" --body "This issue seems to show a purchase number, and anyone can read it here. Please edit it out. If you need a purchase checked, mail it once to hello@moorle.dev; an invoice number belongs in a mail only for a refund or licence question."
           fi
           missing="$(grep -vx invoice <<<"$missing" || true)"
-          has_label=false
-          grep -qx needs-info <<<"$labels" && has_label=true
-          if [ -z "$missing" ]; then
-            if [ "$ACTION" = edited ] && $has_label; then
-              gh issue edit "$NUMBER" --repo "$REPO" --remove-label needs-info
-              echo "removed needs-info"
-            fi
-            exit 0
-          fi
-          [ "$ACTION" = opened ] || exit 0
+          last_actor="$(gh api "repos/$REPO/issues/$NUMBER/timeline" --paginate --jq '.[] | select(.event == "labeled" and .label.name == "needs-info") | .actor.login' | tail -n 1)"
           what=""
           grep -qx package <<<"$missing" && what="the Glyph Gestures version"
           if grep -qx unity <<<"$missing"; then
             [ -n "$what" ] && what="$what and "
             what="${what}the Unity version"
           fi
-          gh issue edit "$NUMBER" --repo "$REPO" --add-label needs-info
-          gh issue comment "$NUMBER" --repo "$REPO" --body "Thanks for the report. Could you edit the issue and give $what as numbers (for example 1.0.0 and 6000.0.76f1)? In Unity, open the ⋯ menu of the Glyph Gestures window and choose Copy diagnostics: it holds both. I will look at it as soon as they are there."
+          plan="$(LABELS="$labels" MISSING="$missing" LAST_ACTOR="$last_actor" bash .github/scripts/intake-plan.sh)"
+          while read -r verb arg; do
+            case "$verb" in
+              add) gh issue edit "$NUMBER" --repo "$REPO" --add-label "$arg" ;;
+              remove) gh issue edit "$NUMBER" --repo "$REPO" --remove-label "$arg" ;;
+              comment) gh issue comment "$NUMBER" --repo "$REPO" --body "Thanks for the report. Could you edit the issue and give $what as numbers (for example 1.0.0 and 6000.0.76f1)? In Unity, open the ⋯ menu of the Glyph Gestures window and choose Copy diagnostics: it holds both. I will look at it once they are there." ;;
+            esac
+          done <<<"$plan"
