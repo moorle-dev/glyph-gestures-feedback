@@ -13,17 +13,17 @@ recognition package. This repository holds no code.
 | Ask how something works | [Discussions, Q&A](https://github.com/moorle-dev/glyph-gestures-feedback/discussions/categories/q-a) |
 | Report something broken | [New bug report](https://github.com/moorle-dev/glyph-gestures-feedback/issues/new?template=bug-report.yml) |
 | See what is planned and what shipped | [Roadmap](https://github.com/orgs/moorle-dev/projects/1) and [Releases](https://github.com/moorle-dev/glyph-gestures-feedback/releases) |
-| Ask about your invoice, licence or anything private | Email moorle.dev@gmail.com |
+| Ask about your invoice, licence or anything private | Email hello@moorle.dev. My reply comes from moorle.dev@gmail.com. |
 
 Vote on an idea by clicking its upvote. The most upvoted ideas are read first. You need a GitHub
-account to vote; without one, email your idea and it will be filed for you.
+account to vote. No GitHub account? Email it; I answer there.
 
 ## What support covers
 
 - Questions about using Glyph Gestures.
 - Bugs in the package.
 
-Please send your package version and Unity version, and your invoice number when you email.
+Please send your package version and Unity version when you email, and your invoice number only for a refund or licence question.
 Custom feature work for a single project is not covered.
 
 ## Not planned
