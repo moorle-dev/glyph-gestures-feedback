@@ -33,7 +33,7 @@ jobs:
           if ! grep -qx bug <<<"$labels"; then echo "not a bug-form issue"; exit 0; fi
           missing="$(bash .github/scripts/intake-check.sh)"
           if grep -qx invoice <<<"$missing" && [ "$ACTION" = opened ]; then
-            gh issue comment "$NUMBER" --repo "$REPO" --body "This issue seems to show a purchase number, and anyone can read it here. Please edit it out; if you need a purchase checked, mail it once to moorle.dev@gmail.com instead."
+            gh issue comment "$NUMBER" --repo "$REPO" --body "This issue seems to show a purchase number, and anyone can read it here. Please edit it out; if you need a purchase checked, mail it once to hello@moorle.dev instead."
           fi
           missing="$(grep -vx invoice <<<"$missing" || true)"
           has_label=false
